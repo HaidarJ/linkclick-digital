@@ -1,0 +1,91 @@
+---
+// Where the enquiry form lands after a successful send (src/pages/contact.astro). Not for search:
+// noindex, left out of the sitemap, and the closing "Book a strategy call" panel is hidden.
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { graph, webPage, breadcrumbs } from '../../lib/schema';
+import { WHATSAPP } from '../../lib/site';
+
+const path = '/contact/thank-you/';
+const crumbs = [{ label: 'Contact', href: '/contact/' }, { label: 'Thank you' }];
+const title = 'Thank You | Linkclick Digital';
+const description = 'Your enquiry has reached Linkclick Digital. Someone will be in touch within 24 hours to arrange a 30-minute strategy call.';
+const schema = graph(webPage(path, 'WebPage', title, description), breadcrumbs(path, crumbs));
+
+const steps = [
+  {
+    title: 'We read your enquiry',
+    body: 'A specialist reads what you sent, and looks at your website if you shared one, before getting in touch.',
+  },
+  {
+    title: 'We contact you within 24 hours',
+    body: 'We reply by email, or by phone if you left a number, to arrange a time that suits you.',
+  },
+  {
+    title: 'Your 30-minute strategy call',
+    body: 'Thirty minutes on your content, ads, website and enquiry handling, and what we would fix first.',
+  },
+];
+
+const links = [
+  { href: '/services/', name: 'Services', desc: 'The four core services and how they work as one system' },
+  { href: '/services/ugc-content/', name: 'UGC & creator content', desc: 'Human-led video that earns trust' },
+  { href: '/services/digital-marketing/', name: 'Digital marketing', desc: 'Paid social, paid search, SEO and social media' },
+  { href: '/services/web-design/', name: 'Web design', desc: 'Websites built to turn visits into enquiries' },
+  { href: '/services/ai-automation/', name: 'AI automation', desc: 'Assistants that answer and book enquiries' },
+  { href: '/about/', name: 'About', desc: 'Who we are and how we work' },
+  { href: '/insights/', name: 'Insights', desc: 'Guides on UGC, ads, SEO and AI search' },
+  { href: '/', name: 'Home', desc: 'Back to the homepage' },
+];
+---
+<Base title={title} description={description} schema={schema} noindex quiet>
+  <section class="page-hero thanks-hero">
+    <div class="wrap thanks-grid">
+      <div class="thanks-mark" aria-hidden="true">
+        <svg viewBox="0 0 120 120" focusable="false"><path class="thanks-tick" d="M33 62 51 80 88 41" pathLength="100" /></svg>
+      </div>
+      <div class="page-hero-text">
+        <Breadcrumbs items={crumbs} />
+        <h1 class="page-title">Thanks. Your enquiry is with us.</h1>
+        <p class="page-lede">Someone from Linkclick Digital will be in touch within 24 hours.</p>
+        <p class="thanks-sooner">Need an answer sooner? <a class="link" href={WHATSAPP} target="_blank" rel="noopener">Message us on WhatsApp</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk blk--steps blk--ink blk--wide on-dark" aria-labelledby="next-h">
+    <div class="wrap blk-grid">
+      <header class="blk-head">
+        <h2 class="blk-title" id="next-h">What happens next</h2>
+      </header>
+      <div class="blk-body">
+        <ol class="blk-steps">
+          {steps.map((s, i) => (
+            <li class="blk-step">
+              <span class="blk-step-n" aria-hidden="true">{i + 1}</span>
+              <h3 class="blk-step-title">{s.title}</h3>
+              <p class="blk-step-body">{s.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="thanks-explore" aria-labelledby="explore-h">
+    <div class="wrap thanks-explore-grid">
+      <h2 class="thanks-explore-title" id="explore-h">While you wait, explore the site</h2>
+      <ul class="thanks-links">
+        {links.map((l) => (
+          <li>
+            <a href={l.href}>
+              <span class="tl-name">{l.name}</span>
+              <span class="tl-desc">{l.desc}</span>
+              <svg class="tl-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

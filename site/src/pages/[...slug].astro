@@ -1,0 +1,72 @@
+---
+// Every Markdown page in src/content/pages except /services/, /about/ and /insights/, which have their own routes.
+// Service pages are laid out as designed sections (src/lib/blocks.ts); legal pages stay as plain reading pages.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Highlights from '../components/Highlights.astro';
+import PageIndex from '../components/PageIndex.astro';
+import Blocks from '../components/Blocks.astro';
+import Faq from '../components/Faq.astro';
+import Related from '../components/Related.astro';
+import Ugc from '../components/art/Ugc.astro';
+import DigitalMarketing from '../components/art/DigitalMarketing.astro';
+import WebDesign from '../components/art/WebDesign.astro';
+import AiAutomation from '../components/art/AiAutomation.astro';
+import { graph, webPage, breadcrumbs, faqPage, service } from '../lib/schema';
+import { longDate, isoDate } from '../lib/dates';
+import { toBlocks } from '../lib/blocks';
+
+export async function getStaticPaths() {
+  const ownRoute = new Set(['insights', 'services', 'about']); // these have their own route files
+  const pages = await getCollection('pages');
+  return pages.filter((p) => !ownRoute.has(p.id)).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content, headings } = await render(entry);
+const path = `/${entry.id}/`;
+const legal = ['privacy', 'cookies', 'complaint-policy', 'terms'].includes(entry.id);
+const ART: Record<string, typeof Ugc> = {
+  'services/ugc-content': Ugc,
+  'services/digital-marketing': DigitalMarketing,
+  'services/web-design': WebDesign,
+  'services/ai-automation': AiAutomation,
+};
+const Art = ART[entry.id];
+const toc = headings.filter((h) => h.depth === 2);
+const { preface, blocks } = legal ? { preface: '', blocks: [] } : toBlocks(entry.rendered?.html ?? '');
+const isService = d.schema.type === 'Service';
+const schema = graph(
+  webPage(path, isService ? 'WebPage' : d.schema.type, d.title, d.description, d.updated ? { dateModified: isoDate(d.updated) } : {}),
+  breadcrumbs(path, d.breadcrumb),
+  isService ? service(path, d.h1, d.description, d.schema.serviceType, d.schema.audience) : null,
+  faqPage(path, d.faq),
+);
+const meta = d.updated && !legal ? `Last updated <time datetime="${isoDate(d.updated)}">${longDate(d.updated)}</time>` : undefined;
+---
+<Base title={d.title} description={d.description} schema={schema} noindex={d.noindex}>
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} cta={!legal} meta={meta}>
+    {Art && <Art slot="art" />}
+  </PageHero>
+  {legal ? (
+    <div class:list={['wrap', 'page-body', { 'page-body--toc': toc.length >= 3 }]}>
+      {toc.length >= 3 && (
+        <nav class="toc" aria-label="On this page">
+          <p class="toc-h">On this page</p>
+          <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        </nav>
+      )}
+      <div class="prose"><Content /></div>
+    </div>
+  ) : (
+    <>
+      <Highlights items={d.highlights} />
+      <PageIndex items={blocks} />
+      <Blocks blocks={blocks} preface={preface} />
+    </>
+  )}
+  <Faq items={d.faq} />
+  <Related items={d.related} />
+</Base>

@@ -1,0 +1,68 @@
+/* Cookie banner and settings (src/components/CookieConsent.astro). The banner's two buttons share one
+   style, so neither is nudged. Mobile-first: a bottom sheet; from 48rem a card bottom-left. */
+
+.cc { position: fixed; z-index: 60; inset: auto 0 0 0; pointer-events: none; }
+.cc[hidden] { display: none; }
+.cc-card {
+  pointer-events: auto; display: grid; gap: var(--space-2xs);
+  padding: var(--space-s) var(--margin) calc(var(--space-s) + env(safe-area-inset-bottom));
+  border-radius: var(--radius-m) var(--radius-m) 0 0;
+  box-shadow: 0 -16px 40px -24px oklch(0.19 0.03 264 / 0.45);
+}
+.cc-title { font-size: var(--step--1); font-weight: 600; }
+.cc-text { font-size: var(--step--1); line-height: 1.45; color: var(--on-dark-muted); max-width: 46ch; }
+.cc-text a { color: var(--on-dark); text-decoration: underline; text-underline-offset: 0.2em; }
+.cc-actions { display: flex; flex-wrap: wrap; gap: var(--space-2xs); margin-top: var(--space-2xs); }
+.cc-btn { min-height: var(--tap); padding: 0 var(--space-s); font-size: var(--step--1); }
+.cc .cc-btn { flex: 1 1 auto; justify-content: center; }
+@media (min-width: 48rem) {
+  .cc { inset: auto auto var(--space-m) var(--space-m); max-width: 23rem; }
+  .cc-card { padding: var(--space-m); border-radius: var(--radius-m); box-shadow: 0 18px 44px -18px oklch(0.19 0.03 264 / 0.5); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cc:not([hidden]) .cc-card { animation: cc-in 320ms var(--ease-out-expo) both; }
+  @keyframes cc-in { from { opacity: 0; transform: translateY(16px); } }
+}
+
+/* while the banner is open the sticky "Book a call" bar steps aside, so nothing sits on top of the choice */
+.cc-open .sticky-cta { visibility: hidden; }
+
+/* settings panel: a native modal dialog (focus is kept inside, Esc closes it) */
+.cc-dialog {
+  width: min(36rem, calc(100% - 2 * var(--margin))); max-height: calc(100dvh - 2rem); margin: auto; padding: 0;
+  border: 0; border-radius: var(--radius-l); background: var(--surface); color: var(--ink);
+  box-shadow: 0 30px 80px -30px oklch(0.19 0.03 264 / 0.55);
+}
+.cc-dialog::backdrop { background: oklch(0.19 0.03 264 / 0.55); }
+.cc-panel { display: grid; gap: var(--space-m); padding: var(--space-l); }
+.cc-panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-m); }
+.cc-panel-title { font-size: var(--step-2); font-weight: 600; letter-spacing: -0.02em; }
+.cc-close { min-height: var(--tap); padding: 0 var(--space-s); background: none; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: inherit; font-size: var(--step--1); font-weight: 600; color: var(--ink); cursor: pointer; }
+.cc-panel-intro { font-size: var(--step--1); line-height: 1.5; color: var(--ink-muted); }
+.cc-panel-intro a { color: var(--accent); }
+.cc-cats { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.cc-cat { display: grid; gap: 0.35rem; padding-block: var(--space-m); border-bottom: 1px solid var(--line); }
+.cc-cat-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-m); }
+.cc-cat h3 { font-size: var(--step-0); font-weight: 600; }
+.cc-cat p { font-size: var(--step--1); line-height: 1.5; color: var(--ink-muted); max-width: 46ch; }
+.cc-always { font-size: var(--step--1); font-weight: 600; color: var(--ink-muted); white-space: nowrap; }
+.cc-actions--panel { display: grid; grid-template-columns: 1fr; }
+@media (min-width: 30rem) { .cc-actions--panel { grid-template-columns: repeat(3, auto); justify-content: start; } .cc-actions--panel .cc-btn { width: auto; } }
+@media (min-width: 48rem) { .cc-panel { padding: var(--space-xl); } }
+
+/* the switch: a real checkbox (role="switch"), restyled */
+.cc-switch {
+  appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 3rem; height: 1.75rem; margin: 0;
+  border-radius: var(--radius-pill); background: var(--line-strong); cursor: pointer; transition: background-color var(--dur-base) var(--ease-out);
+}
+.cc-switch::after {
+  content: ""; position: absolute; top: 0.2rem; left: 0.2rem; width: 1.35rem; height: 1.35rem; border-radius: 50%;
+  background: var(--surface); box-shadow: 0 1px 2px oklch(0 0 0 / 0.25); transition: transform var(--dur-base) var(--ease-out);
+}
+.cc-switch:checked { background: var(--accent); }
+.cc-switch:checked::after { transform: translateX(1.25rem); }
+.cc-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* footer: "Cookie settings" is a button that looks like its neighbouring links */
+.foot-btn { display: inline-flex; align-items: center; min-height: 2.25rem; padding: 0; background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { .foot-btn:hover { color: var(--accent-on-dark); text-decoration: underline; text-underline-offset: 0.25em; } }

@@ -1,0 +1,65 @@
+---
+// Every page: head (title, meta, canonical, Open Graph, JSON-LD), header, closing CTA, footer.
+import '@fontsource-variable/schibsted-grotesk';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '../styles/site.css';
+import '../styles/pages.css';
+import '../styles/blocks.css';
+import '../styles/consent.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import StickyCta from '../components/StickyCta.astro';
+import CookieConsent from '../components/CookieConsent.astro';
+import { NAME } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: Record<string, unknown>;
+  noindex?: boolean;
+  ogType?: 'website' | 'article';
+  /** Hide the closing "Book a strategy call" panel and the sticky call bar (e.g. the thank-you page). */
+  quiet?: boolean;
+}
+const { title, description, schema, noindex = false, ogType = 'website', quiet = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+{noindex && <meta name="robots" content="noindex">}
+<meta name="theme-color" content="#f5f7f9">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="sitemap" href="/sitemap-index.xml">
+<meta property="og:type" content={ogType}>
+<meta property="og:site_name" content={NAME}>
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:image" content={ogImage}>
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+{schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+<script is:inline>document.documentElement.classList.add('js')</script>
+</head>
+<body class:list={[{ quiet }]}>
+<a class="skip" href="#main">Skip to content</a>
+<SiteHeader />
+<main id="main">
+<slot />
+</main>
+<SiteFooter />
+<StickyCta />
+<CookieConsent />
+<script>import '../scripts/site.ts';</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+---
+// Sourced figures that the page body already quotes, set large under the hero. Each links to its source.
+interface Props { items: { value: string; label: string; source: string; href: string }[] }
+const { items = [] } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="hl" aria-label="Figures quoted on this page">
+    <div class:list={['wrap', 'hl-grid', `hl-grid--${items.length}`]}>
+      {items.map((h) => (
+        <figure class="hl-item">
+          <p class="hl-value">{h.value}</p>
+          <figcaption>
+            <span class="hl-label">{h.label}</span>
+            <a class="hl-src" href={h.href} rel="noopener">{h.source}</a>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+)}

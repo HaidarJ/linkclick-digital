@@ -1,0 +1,21 @@
+---
+// Same pattern as the homepage FAQ: answers are in the HTML on load (<details>), for readers and crawlers.
+import { inline } from '../lib/inline';
+interface Props { items: { q: string; a: string }[]; title?: string }
+const { items, title = 'Questions people ask' } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="faq" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <h2 class="section-title" id="faq-title">{title}</h2>
+      <div class="faq-list">
+        {items.map((f) => (
+          <details>
+            <summary>{f.q}</summary>
+            <div class="answer"><p set:html={inline(f.a)} /></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

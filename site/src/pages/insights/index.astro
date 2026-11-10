@@ -1,0 +1,43 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { graph, webPage, breadcrumbs, abs } from '../../lib/schema';
+import { longDate, isoDate } from '../../lib/dates';
+import { inline } from '../../lib/inline';
+
+const page = await getEntry('pages', 'insights');
+const d = page?.data ?? {
+  title: 'Insights | Linkclick Digital',
+  description: 'Articles from Linkclick Digital on UGC, paid social, paid search, SEO, AI search and AI automation for founder-led UK businesses.',
+  h1: 'Insights',
+  lede: '',
+  breadcrumb: [{ label: 'Insights' }],
+};
+const Content = page ? (await render(page)).Content : null;
+const articles = (await getCollection('insights', (a) => !a.data.draft)).sort(
+  (a, b) => b.data.published.getTime() - a.data.published.getTime(),
+);
+const path = '/insights/';
+const schema = graph(
+  webPage(path, 'CollectionPage', d.title, d.description, {
+    mainEntity: { '@type': 'ItemList', itemListElement: articles.map((a, i) => ({ '@type': 'ListItem', position: i + 1, url: abs(`/insights/${a.id}/`) })) },
+  }),
+  breadcrumbs(path, d.breadcrumb),
+);
+---
+<Base title={d.title} description={d.description} schema={schema}>
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} cta={false} />
+  <div class="wrap page-body">
+    <div class="prose">{Content && <Content />}</div>
+  </div>
+  <section class="wrap article-list" aria-label="Articles">
+    {articles.map((a) => (
+      <article class="article-card">
+        <h2><a href={`/insights/${a.id}/`}>{a.data.h1}</a></h2>
+        <p set:html={inline(a.data.lede)} />
+        <p class="article-card-meta">Updated <time datetime={isoDate(a.data.updated)}>{longDate(a.data.updated)}</time></p>
+      </article>
+    ))}
+  </section>
+</Base>

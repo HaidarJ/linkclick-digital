@@ -1,0 +1,35 @@
+---
+// /about/: hero, a statement line, then the About sections as designed blocks (fact sheet, method, AI stance).
+import { getEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Blocks from '../components/Blocks.astro';
+import Faq from '../components/Faq.astro';
+import Related from '../components/Related.astro';
+import { graph, webPage, breadcrumbs, faqPage } from '../lib/schema';
+import { longDate, isoDate } from '../lib/dates';
+import { toBlocks } from '../lib/blocks';
+
+const page = await getEntry('pages', 'about');
+if (!page) throw new Error('src/content/pages/about.md is missing');
+const d = page.data;
+const { preface, blocks } = toBlocks(page.rendered?.html ?? '');
+const path = '/about/';
+const schema = graph(
+  webPage(path, 'AboutPage', d.title, d.description, d.updated ? { dateModified: isoDate(d.updated) } : {}),
+  breadcrumbs(path, d.breadcrumb),
+  faqPage(path, d.faq),
+);
+const meta = d.updated ? `Last updated <time datetime="${isoDate(d.updated)}">${longDate(d.updated)}</time>` : undefined;
+---
+<Base title={d.title} description={d.description} schema={schema}>
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} meta={meta} />
+  <section class="manifesto" aria-label="What Linkclick Digital stands for">
+    <div class="wrap">
+      <p class="manifesto-line"><span class="manifesto-text"><span class="nb">Big-agency</span> skills, without the <span class="nb">big-agency</span> layers.</span></p>
+    </div>
+  </section>
+  <Blocks blocks={blocks} preface={preface} />
+  <Faq items={d.faq} />
+  <Related items={d.related} />
+</Base>
