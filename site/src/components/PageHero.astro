@@ -14,13 +14,16 @@ const hasArt = Astro.slots.has('art');
 // Keep hyphenated words ("Human-led", "Mobile-first") whole: a line break at the hyphen reads badly in display type.
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const title = esc(h1).replace(/(\S+-\S+)/g, '<span class="nb">$1</span>');
+// Same for the lede ("30-minute", "founder-led"): only text between tags is touched, never link URLs.
+const ledeHtml = inline(lede).replace(/(^|>)([^<]*)/g, (_m, a: string, t: string) =>
+  a + t.replace(/([\p{L}\p{N}]+(?:-[\p{L}\p{N}]+)+)/gu, '<span class="nb">$1</span>'));
 ---
 <section class:list={['page-hero', { 'page-hero--art': hasArt }]}>
   <div class="wrap page-hero-grid">
     <div class="page-hero-text">
       <Breadcrumbs items={breadcrumb} />
       <h1 class="page-title" set:html={title} />
-      {lede && <p class="page-lede" set:html={inline(lede)} />}
+      {lede && <p class="page-lede" set:html={ledeHtml} />}
       {meta && <p class="page-meta" set:html={meta} />}
       {cta && <CtaRow />}
     </div>

@@ -9,7 +9,7 @@ launch. Page names in brackets show where each item appears. Last checked: 10 No
 - [ ] Solicitor review of the Terms, Privacy and Cookie pages
 - [x] Incorporated September 2017 *(About, structured data)*
 - [x] Data requests and complaints: info@linkclickdigital.com *(Privacy, Complaint policy)*
-- [x] Enquiries kept for 90 days *(Privacy)*. The Google Sheet now deletes older rows every night. **Also delete, after 90 days:** call bookings in Google Calendar, WhatsApp chats and the enquiry notification emails in your inbox.
+- [x] Enquiries kept for 90 days *(Privacy)*. The Google Sheet now deletes older rows every night. **Also delete, after 90 days:** strategy calls in Google Calendar, WhatsApp chats and the enquiry notification emails in your inbox.
 - [x] Complaint policy working hours and timescales confirmed
 - [x] ICO registration number: removed from the site
 - [x] Confirmed: the new line on representatives: "email info@linkclickdigital.com with their name and your confirmation that they can act for you" *(Complaint policy)*
@@ -35,8 +35,8 @@ launch. Page names in brackets show where each item appears. Last checked: 10 No
   - AI helps draft and edit; a person checks everything before it goes live (About: true once you've reviewed the site)
 
 ## 5. Set-up for launch
-- [ ] Google Calendar booking page link for "Book a strategy call" *(`site/src/lib/site.ts` → `BOOKING_URL`)*
-- [ ] The inbox that should receive enquiries *(Apps Script → `NOTIFY_TO`)*, then deploy the script and send the web app URL *(`FORM_ENDPOINT`)*
+- [x] No Google Calendar booking page (owner, 10 Nov 2026): "Book a strategy call" goes to the enquiry form, the thank-you page promises contact within 24 hours, and you arrange the call by reply
+- [x] Enquiry form connected (10 Nov 2026): the "Website enquiries" Google Sheet in the Workspace account, with the "Website enquiry form" Apps Script deployed as a web app *(`FORM_ENDPOINT`)*. Alerts go to the account that owns the script; set `NOTIFY_TO` in the script to use another inbox. The nightly 90-day clean-up trigger is installed.
 - [ ] Monthly budget ranges for the enquiry form, e.g. three or four bands *(`BUDGET_BANDS`; the field stays hidden until set)*
 - [x] Google Analytics: yes *(Cookie and Privacy policies updated)*
 - [ ] Google Analytics measurement ID (G-…) *(`GA_MEASUREMENT_ID`)*

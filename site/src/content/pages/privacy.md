@@ -1,8 +1,8 @@
 ---
 title: "Privacy Policy | Linkclick Digital"
-description: "How Linkclick Digital handles personal data from its website, enquiry form, call bookings and WhatsApp chats, and the rights you have under UK GDPR."
+description: "How Linkclick Digital handles personal data from its website, enquiry form, strategy calls and WhatsApp chats, and the rights you have under UK GDPR."
 h1: "Privacy policy"
-lede: "This policy explains how Linkclick Digital collects, uses and stores personal data when you visit this website, send an enquiry, book a strategy call or message us on WhatsApp."
+lede: "This policy explains how Linkclick Digital collects, uses and stores personal data when you visit this website, send an enquiry, have a strategy call with us or message us on WhatsApp."
 breadcrumb:
   - { label: "Privacy policy" }
 schema:
@@ -38,9 +38,9 @@ The enquiry form on the [contact page](/contact/) asks for:
 - your budget band
 - your message
 
-### When you book a strategy call
+### When we arrange a strategy call
 
-"Book a strategy call" opens a Google Calendar appointment booking page. We receive the details you enter there, such as your name and email address, and the time you choose. The booking is added to Linkclick Digital's Google Calendar.
+"Book a strategy call" takes you to the enquiry form. After you send it, we contact you to arrange the call, and add it to Linkclick Digital's Google Calendar with your name, email address and the time agreed.
 
 ### When you message us on WhatsApp
 
@@ -69,7 +69,7 @@ Linkclick Digital uses these providers to run the website and handle enquiries.
 
 ### Google (Google Workspace)
 
-The enquiry form sends your answers to a Google Apps Script web app run in Linkclick Digital's Google Workspace account. Each entry is stored in a Google Sheet and emailed to Linkclick Digital's Google Workspace inbox. Strategy call bookings are made through Google Calendar appointment booking, which is also part of Google Workspace.
+The enquiry form sends your answers to a Google Apps Script web app run in Linkclick Digital's Google Workspace account. Each entry is stored in a Google Sheet and emailed to Linkclick Digital's Google Workspace inbox. Strategy calls we arrange are kept in Google Calendar, which is also part of Google Workspace.
 
 ### Google (Google Analytics), if you accept analytics cookies
 
@@ -93,7 +93,7 @@ Google, GitHub and Meta may store or process personal data outside the UK, inclu
 
 We keep personal data only for as long as we need it for the purposes in this policy.
 
-We keep enquiries for 90 days and then delete them. This applies whether you contact us through the enquiry form, a call booking or WhatsApp.
+We keep enquiries for 90 days and then delete them. This applies whether you contact us through the enquiry form or WhatsApp, and to the strategy calls we arrange with you.
 
 Google Analytics keeps detailed analytics data, such as the visits linked to a device, for 14 months, then deletes it. Summary reports with no details about individual visitors can be kept for longer.
 

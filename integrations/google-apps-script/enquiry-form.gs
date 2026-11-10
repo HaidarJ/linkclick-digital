@@ -4,7 +4,8 @@
  * Set-up (in Linkclick Digital's Google Workspace account):
  *  1. Create a Google Sheet called "Website enquiries".
  *  2. In the Sheet: Extensions › Apps Script. Replace the editor contents with this file. Save.
- *  3. Set NOTIFY_TO below to the inbox that should receive enquiries.
+ *  3. Optional: set NOTIFY_TO below to another inbox. Left blank, enquiry emails go to the Google
+ *     account that owns this script (kept blank here so no address sits in the public repository).
  *  4. Deploy › New deployment › type "Web app". Execute as: Me. Who has access: Anyone. Deploy,
  *     approve the permissions, and copy the web app URL (ends in /exec).
  *  5. Put that URL in site/src/lib/site.ts as FORM_ENDPOINT, commit and push.
@@ -12,7 +13,7 @@
  *     than 90 days are then deleted every night, as the privacy policy says.
  * After editing this script later, use Deploy › Manage deployments › Edit › New version (the URL stays).
  */
-const NOTIFY_TO = 'CHANGE-ME@your-workspace-domain'; // TODO(client): the enquiries inbox
+const NOTIFY_TO = ''; // blank = the Google account that owns this script
 const SHEET_NAME = 'Enquiries';
 const FIELDS = ['name', 'email', 'phone', 'business', 'website', 'industry', 'budget', 'message'];
 const MAX_LEN = 4000;
@@ -21,8 +22,8 @@ const KEEP_DAYS = 90; // privacy policy: enquiries are kept for 90 days, then de
 function doPost(e) {
   const p = (e && e.parameter) || {};
   // Spam checks: the hidden "fax" field must stay empty, and a person takes more than 3 seconds.
-  const started = Number(p.t || 0);
-  if (p.fax || (started && Date.now() - started < 3000)) return done_();
+  // "t" is the time spent on the page in milliseconds, measured by the browser (blank without JavaScript).
+  if (p.fax || (p.t && Number(p.t) < 3000)) return done_();
   if (!p.name || !p.email || !p.message || p.consent !== 'yes') return done_();
 
   const clean = {};
@@ -33,7 +34,10 @@ function doPost(e) {
   try {
     const book = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = book.getSheetByName(SHEET_NAME) || book.insertSheet(SHEET_NAME);
-    if (sheet.getLastRow() === 0) sheet.appendRow(['Received', ...FIELDS, 'Consent']);
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(['Received', ...FIELDS, 'Consent']);
+      sheet.setFrozenRows(1);
+    }
     sheet.appendRow([new Date(), ...FIELDS.map((f) => clean[f]), 'yes']);
   } finally {
     lock.releaseLock();
@@ -41,7 +45,7 @@ function doPost(e) {
 
   const lines = FIELDS.filter((f) => clean[f]).map((f) => `${f[0].toUpperCase() + f.slice(1)}: ${clean[f]}`);
   MailApp.sendEmail({
-    to: NOTIFY_TO,
+    to: NOTIFY_TO || Session.getEffectiveUser().getEmail(),
     replyTo: clean.email,
     subject: `New website enquiry: ${clean.name}${clean.business ? ` (${clean.business})` : ''}`,
     body: lines.join('\n') + '\n\nSaved in the "Website enquiries" sheet.',
@@ -56,11 +60,13 @@ function safe_(v) {
   return s;
 }
 
-// Shown only when the browser posts without JavaScript; with JavaScript the page shows its own message.
+// Shown only when the browser posts without JavaScript; with JavaScript the site goes to its own
+// thank-you page (/contact/thank-you/). target="_top" lets the link leave Apps Script's frame.
 function done_() {
   return HtmlService.createHtmlOutput(
-    '<p style="font-family:system-ui;padding:2rem">Thanks. Your enquiry has been sent. ' +
-      '<a href="https://www.linkclickdigital.com/">Back to Linkclick Digital</a></p>',
+    '<p style="font-family:system-ui;padding:2rem;max-width:40rem;line-height:1.5">Thanks. Your enquiry has been sent, ' +
+      'and someone from Linkclick Digital will be in touch within 24 hours. ' +
+      '<a href="https://www.linkclickdigital.com/contact/thank-you/" target="_top">See what happens next</a></p>',
   );
 }
 

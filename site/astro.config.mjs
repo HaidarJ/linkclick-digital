@@ -26,7 +26,7 @@ export default defineConfig({
   integrations: [
     markTodos(),
     sitemap({
-      filter: (page) => !Object.keys(redirects).some((from) => page.endsWith(from)) && !page.endsWith('/404/'),
+      filter: (page) => !Object.keys(redirects).some((from) => page.endsWith(from)) && !page.endsWith('/404/') && !page.endsWith('/contact/thank-you/'),
     }),
   ],
 });

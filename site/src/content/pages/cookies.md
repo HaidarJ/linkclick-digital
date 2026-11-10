@@ -45,7 +45,6 @@ The website is hosted on GitHub Pages. GitHub, Inc. may log visitors' IP address
 
 Some links on this website open other services, which have their own cookie policies. Those services set their own cookies, not this website.
 
-- **Book a strategy call** opens a Google Calendar appointment booking page run by Google. Google's cookie policy applies on that page.
 - **WhatsApp links** open WhatsApp, run by Meta, when you choose to message us. WhatsApp's own cookie and privacy policies apply.
 
 ## Your browser settings

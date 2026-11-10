@@ -18,8 +18,10 @@ interface Props {
   schema?: Record<string, unknown>;
   noindex?: boolean;
   ogType?: 'website' | 'article';
+  /** Hide the closing "Book a strategy call" panel and the sticky call bar (e.g. the thank-you page). */
+  quiet?: boolean;
 }
-const { title, description, schema, noindex = false, ogType = 'website' } = Astro.props;
+const { title, description, schema, noindex = false, ogType = 'website', quiet = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL('/og.png', Astro.site).href;
 ---
@@ -49,7 +51,7 @@ const ogImage = new URL('/og.png', Astro.site).href;
 {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 <script is:inline>document.documentElement.classList.add('js')</script>
 </head>
-<body>
+<body class:list={[{ quiet }]}>
 <a class="skip" href="#main">Skip to content</a>
 <SiteHeader />
 <main id="main">

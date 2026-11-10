@@ -3,38 +3,22 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import WaIcon from '../components/WaIcon.astro';
 import { graph, webPage, breadcrumbs } from '../lib/schema';
-import { BOOKING_URL, FORM_ENDPOINT, BUDGET_BANDS, WHATSAPP } from '../lib/site';
+import { FORM_ENDPOINT, BUDGET_BANDS, WHATSAPP } from '../lib/site';
 
 const path = '/contact/';
 const crumbs = [{ label: 'Contact' }];
 const title = 'Book a Strategy Call | Linkclick Digital';
-const description = 'Book a 30-minute strategy call with Linkclick Digital, or send an enquiry with your goals. Based in London, working with businesses worldwide.';
+const description = 'Send Linkclick Digital an enquiry and we will be in touch within 24 hours to arrange a 30-minute strategy call. Or message us on WhatsApp.';
 const schema = graph(webPage(path, 'ContactPage', title, description), breadcrumbs(path, crumbs));
 ---
 <Base title={title} description={description} schema={schema}>
   <PageHero
     h1="Book a strategy call"
-    lede="Book a 30-minute strategy call with Linkclick Digital, send an enquiry, or message us on WhatsApp. Tell us what you sell, who you sell to and what isn't working yet."
+    lede="Send an enquiry and someone from Linkclick Digital will be in touch within 24 hours to arrange a 30-minute strategy call. Tell us what you sell, who you sell to and what isn't working yet."
     breadcrumb={crumbs}
     cta={false}
   />
   <div class="wrap contact-grid">
-    <div class="contact-routes">
-      <section class="contact-route" aria-labelledby="book-h">
-        <h2 id="book-h">Book a call</h2>
-        <p>Thirty minutes on your content, ads, website and enquiry handling, and what we would fix first.</p>
-        {BOOKING_URL
-          ? <a class="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener">Choose a time</a>
-          : <p><mark class="todo">[CLIENT TO CONFIRM: Google Calendar booking page link]</mark></p>}
-      </section>
-      <section class="contact-route" aria-labelledby="wa-h">
-        <h2 id="wa-h">Message us</h2>
-        <p>Prefer to type? Send a WhatsApp message and a person replies.</p>
-        <a class="btn btn-outline" href={WHATSAPP} target="_blank" rel="noopener"><WaIcon /><span>Chat on WhatsApp</span></a>
-      </section>
-      <p class="contact-place">Linkclick Digital · Based in London, working worldwide</p>
-    </div>
-
     <form class="enquiry" method="post" action={FORM_ENDPOINT || undefined} data-endpoint={FORM_ENDPOINT} aria-labelledby="form-h" novalidate>
       <h2 id="form-h">Send an enquiry</h2>
       <div class="field">
@@ -85,21 +69,49 @@ const schema = graph(webPage(path, 'ContactPage', title, description), breadcrum
         <input id="f-consent" name="consent" type="checkbox" value="yes" required>
         <label for="f-consent">I agree that Linkclick Digital can keep these details to reply to my enquiry, as set out in the <a href="/privacy/">privacy policy</a>.</label>
       </div>
-      <button class="btn btn-primary" type="submit">Send enquiry</button>
+      <button class="btn btn-primary enquiry-send" type="submit"><span class="send-spin" aria-hidden="true"></span><span class="send-label">Send enquiry</span></button>
       <p class="form-status" role="status" aria-live="polite"></p>
     </form>
+    <div class="contact-routes">
+      <section class="contact-route" aria-labelledby="wa-h">
+        <h2 id="wa-h">Message us</h2>
+        <p>Prefer to type? Send a WhatsApp message and a person replies.</p>
+        <a class="btn btn-outline" href={WHATSAPP} target="_blank" rel="noopener"><WaIcon /><span>Chat on WhatsApp</span></a>
+      </section>
+      <p class="contact-place">Linkclick Digital · Based in London, working worldwide</p>
+    </div>
+
   </div>
 </Base>
 
 <script>
-  // Progressive enhancement: validate, post to the Apps Script endpoint, show the result in place.
+  // Progressive enhancement: validate, post to the Apps Script endpoint while the button shows a sending
+  // state, then go to the thank-you page. Without JavaScript the form posts straight to Apps Script.
+  const THANKS = '/contact/thank-you/';
+  const TIMEOUT_MS = 30000;
   const form = document.querySelector<HTMLFormElement>('form.enquiry');
   if (form) {
     const status = form.querySelector<HTMLElement>('.form-status')!;
+    const button = form.querySelector<HTMLButtonElement>('.enquiry-send')!;
+    const label = button.querySelector<HTMLElement>('.send-label')!;
+    const elapsed = form.elements.namedItem('t') as HTMLInputElement;
     const started = Date.now();
-    (form.elements.namedItem('t') as HTMLInputElement).value = String(started);
+
+    const sending = (on: boolean) => {
+      form.classList.toggle('is-sending', on);
+      form.setAttribute('aria-busy', String(on));
+      button.disabled = on;
+      label.textContent = on ? 'Sending…' : 'Send enquiry';
+    };
+
+    // Coming back to this page from the thank-you page (back button) must show a usable form.
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) { sending(false); status.textContent = ''; }
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (form.classList.contains('is-sending')) return;
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
@@ -109,19 +121,24 @@ const schema = graph(webPage(path, 'ContactPage', title, description), breadcrum
         status.textContent = "The form isn't connected yet. Please message us on WhatsApp.";
         return;
       }
-      const button = form.querySelector('button')!;
-      button.disabled = true;
-      status.textContent = 'Sending…';
+      // Time on the page, measured here so a fast or slow device clock can't trip the spam check.
+      elapsed.value = String(Date.now() - started);
+      const body = new FormData(form);
+      sending(true);
+      status.textContent = 'Sending your enquiry. This can take a few seconds.';
+      const timer = new AbortController();
+      const stop = window.setTimeout(() => timer.abort(), TIMEOUT_MS);
       try {
         // Apps Script web apps don't return CORS headers, so the response can't be read: a network
-        // error is the only failure the page can see.
-        await fetch(endpoint, { method: 'POST', mode: 'no-cors', body: new FormData(form) });
+        // error or the timeout is the only failure the page can see.
+        await fetch(endpoint, { method: 'POST', mode: 'no-cors', body, signal: timer.signal });
         form.reset();
-        status.textContent = 'Thanks. Your enquiry has been sent, and a person will reply.';
+        window.location.assign(THANKS);
       } catch {
+        sending(false);
         status.textContent = "Sorry, that didn't send. Please try again or message us on WhatsApp.";
       } finally {
-        button.disabled = false;
+        window.clearTimeout(stop);
       }
     });
   }

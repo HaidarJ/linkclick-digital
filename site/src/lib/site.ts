@@ -7,12 +7,10 @@ export const DESCRIPTOR = 'London digital agency for UGC, digital marketing, web
 export const WHATSAPP =
   "https://wa.me/447908470600?text=Hi%20Linkclick%20Digital%2C%20I%27d%20like%20to%20talk%20about%20growing%20my%20business.";
 
-// TODO(client): the Google Calendar appointment schedule link. While empty, "Book a strategy call"
-// buttons go to /contact/, which carries the enquiry form and WhatsApp.
-export const BOOKING_URL = '';
-
-// TODO(client): the deployed Google Apps Script web app URL (integrations/google-apps-script/).
-export const FORM_ENDPOINT = '';
+// The enquiry form posts here: the "Website enquiry form" Apps Script web app on the Website enquiries
+// sheet in Linkclick Digital's Google Workspace (integrations/google-apps-script/enquiry-form.gs).
+export const FORM_ENDPOINT =
+  'https://script.google.com/macros/s/AKfycbzp9M_FeESYMMv2F4W7GA-gOttXBhC3OByLze6jMdjlx63LIzTp_WCnIf2N6B0VUQMG1g/exec';
 
 // TODO(client): the monthly budget bands for the enquiry form. The field is hidden while empty.
 export const BUDGET_BANDS: string[] = [];
