@@ -1,0 +1,10 @@
+---
+// The homepage is generated from the approved mockup (scripts/port-mockup.py), including its head.
+import Base from '../layouts/Base.astro';
+import Sections from '../components/home/Sections.astro';
+import schema from '../data/home-schema.json';
+import meta from '../data/home-meta.json';
+---
+<Base title={meta.title} description={meta.description} schema={schema}>
+  <Sections />
+</Base>

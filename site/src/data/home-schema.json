@@ -1,0 +1,130 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "Organization",
+        "ProfessionalService"
+      ],
+      "@id": "https://www.linkclickdigital.com/#organization",
+      "name": "Linkclick Digital",
+      "url": "https://www.linkclickdigital.com/",
+      "legalName": "Linkclick Digital Limited",
+      "foundingDate": "2017-09",
+      "identifier": {
+        "@type": "PropertyValue",
+        "propertyID": "Companies House company number",
+        "value": "10976392"
+      },
+      "telephone": "+44 7908 470600",
+      "description": "London digital agency for UGC, digital marketing, web design and AI automation, working with businesses worldwide in many industries, from healthcare to banking.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "London",
+        "addressCountry": "GB"
+      },
+      "areaServed": "Worldwide",
+      "knowsAbout": [
+        "User-generated content",
+        "Paid social advertising",
+        "Paid search advertising",
+        "Search engine optimisation",
+        "Generative engine optimisation",
+        "Social media management",
+        "Web design",
+        "AI automation"
+      ],
+      "sameAs": [
+        "https://www.instagram.com/linkclick_digital"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.linkclickdigital.com/#website",
+      "url": "https://www.linkclickdigital.com/",
+      "name": "Linkclick Digital",
+      "publisher": {
+        "@id": "https://www.linkclickdigital.com/#organization"
+      },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.linkclickdigital.com/#webpage",
+      "url": "https://www.linkclickdigital.com/",
+      "name": "Digital Marketing Agency London | Linkclick Digital",
+      "isPartOf": {
+        "@id": "https://www.linkclickdigital.com/#website"
+      },
+      "about": {
+        "@id": "https://www.linkclickdigital.com/#organization"
+      },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://www.linkclickdigital.com/#faq",
+      "isPartOf": {
+        "@id": "https://www.linkclickdigital.com/#webpage"
+      },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does a digital marketing agency do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A digital marketing agency plans and runs the online activity that brings a business new customers: content, ads, search, social media and the website they lead to. Linkclick Digital, a London agency, runs these as one system for businesses worldwide in many industries, adding UGC and creator content and AI automation that answers every enquiry."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does a digital marketing agency cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cost depends on scope: the number of channels, how much content is made, your ad spend and whether a website or automation build is needed. Linkclick Digital scopes each engagement rather than publishing fixed prices. Most clients start with a growth plan, then a monthly retainer. Share a budget range when you enquire and we will tell you honestly what it can achieve."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is it worth hiring a marketing agency?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is worth it when the agency is accountable for results you can measure, such as enquiries and booked calls, and costs less than building the same skills in-house. It is rarely worth it for activity without a clear goal. Linkclick Digital reports on enquiries and bookings, not likes, so you can judge the return every month."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I get AI assistants like ChatGPT to recommend my business?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Make your business easy for AI to find, understand and trust: rank in normal search, describe your business the same way everywhere, publish pages that answer real questions with sourced facts, and earn mentions and reviews on other sites. Traditional SEO still matters most: in 2026 organic search sent about 43% of website visits, against 0.3% from AI chatbots (SE Ranking, 101,000 sites)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can AI book appointments for my business?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. An AI assistant connected to your calendar can answer enquiries from your website, Instagram or WhatsApp, ask the qualifying questions you choose, offer available slots and send reminders. Linkclick Digital sets these up with a person in the loop, so sensitive or complex conversations are handed to your team."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does UGC work for businesses with strict advertising rules?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, when scripts avoid claims the rules don’t allow. Linkclick Digital checks every script and edit against the advertising rules that apply to your industry and market before anything goes live, and your team keeps final sign-off. Real customers and founders on camera build trust without overclaiming."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you use AI-generated actors or avatars?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not to stand in for real people. In a July 2026 YouGov survey, most UK adults who had seen AI-generated actors in ads disliked them, and 78% said they would trust a brand less if it used them. Linkclick Digital uses AI to edit, caption and test faster, and keeps real people on camera."
+          }
+        }
+      ]
+    }
+  ]
+}

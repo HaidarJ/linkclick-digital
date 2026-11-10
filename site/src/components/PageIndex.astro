@@ -1,0 +1,12 @@
+---
+interface Props { items: { id: string; title: string }[] }
+const { items } = Astro.props;
+---
+{items.length >= 3 && (
+  <nav class="page-index" aria-label="On this page">
+    <div class="wrap page-index-inner">
+      <p class="page-index-h">On this page</p>
+      <ol>{items.map((b) => <li><a href={`#${b.id}`} set:html={b.title} /></li>)}</ol>
+    </div>
+  </nav>
+)}

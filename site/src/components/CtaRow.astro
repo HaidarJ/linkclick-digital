@@ -1,0 +1,11 @@
+---
+import WaIcon from './WaIcon.astro';
+import { BOOKING_URL, WHATSAPP } from '../lib/site';
+interface Props { light?: boolean }
+const { light = false } = Astro.props;
+const book = BOOKING_URL || '/contact/';
+---
+<div class="cta-row">
+  <a class:list={['btn', light ? 'btn-light' : 'btn-primary']} href={book}>Book a strategy call</a>
+  <a class="btn btn-outline" href={WHATSAPP} target="_blank" rel="noopener"><WaIcon /><span>Chat on WhatsApp</span></a>
+</div>

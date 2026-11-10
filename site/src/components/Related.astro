@@ -1,0 +1,14 @@
+---
+interface Props { items: { href: string; label: string }[]; title?: string }
+const { items, title = 'Where to next' } = Astro.props;
+---
+{items.length > 0 && (
+  <section class="related" aria-labelledby="related-title">
+    <div class="wrap">
+      <h2 class="related-title" id="related-title">{title}</h2>
+      <ul class:list={['rel-tiles', `rel-tiles--${Math.min(items.length, 4)}`]}>
+        {items.map((r) => <li><a class="rel-tile" href={r.href}><span>{r.label}</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+)}

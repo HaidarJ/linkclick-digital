@@ -1,0 +1,57 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Faq from '../../components/Faq.astro';
+import Related from '../../components/Related.astro';
+import { graph, webPage, breadcrumbs, faqPage, abs } from '../../lib/schema';
+import { ORG_ID } from '../../lib/site';
+import { longDate, isoDate } from '../../lib/dates';
+import { inline, plain } from '../../lib/inline';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('insights', (a) => !a.data.draft);
+  return articles.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content, headings } = await render(entry);
+const path = `/insights/${entry.id}/`;
+const crumbs = [{ label: 'Insights', href: '/insights/' }, { label: d.h1 }];
+// The owner chose not to name people on the site (2026-11-10): "Linkclick Digital" bylines are the organisation.
+const authorKnown = !/CLIENT TO CONFIRM/.test(d.author) && d.author.trim() !== 'Linkclick Digital';
+const schema = graph(
+  webPage(path, 'WebPage', d.title, d.description),
+  breadcrumbs(path, crumbs),
+  {
+    '@type': 'BlogPosting',
+    '@id': `${abs(path)}#article`,
+    headline: d.h1,
+    description: d.description,
+    datePublished: isoDate(d.published),
+    dateModified: isoDate(d.updated),
+    author: authorKnown ? { '@type': 'Person', name: plain(d.author) } : { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    mainEntityOfPage: { '@id': `${abs(path)}#webpage` },
+    inLanguage: 'en-GB',
+  },
+  faqPage(path, d.faq),
+);
+const toc = headings.filter((h) => h.depth === 2);
+const meta = `By ${inline(d.author)} · Updated <time datetime="${isoDate(d.updated)}">${longDate(d.updated)}</time>`;
+const next = d.feeds ? [{ href: d.feeds, label: 'Get help with this from Linkclick Digital' }] : [];
+---
+<Base title={d.title} description={d.description} schema={schema} ogType="article">
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={crumbs} cta={false} meta={meta} />
+  <div class:list={['wrap', 'page-body', { 'page-body--toc': toc.length >= 3 }]}>
+    {toc.length >= 3 && (
+      <nav class="toc" aria-label="On this page">
+        <p class="toc-h">On this page</p>
+        <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+      </nav>
+    )}
+    <article class="prose"><Content /></article>
+  </div>
+  <Faq items={d.faq} />
+  <Related items={next} />
+</Base>

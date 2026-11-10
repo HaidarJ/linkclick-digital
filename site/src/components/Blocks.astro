@@ -1,0 +1,65 @@
+---
+// Renders the designed sections produced by src/lib/blocks.ts.
+import type { Block } from '../lib/blocks';
+interface Props { blocks: Block[]; preface?: string }
+const { blocks, preface = '' } = Astro.props;
+const wide = new Set(['cards', 'steps', 'compare', 'factors', 'facts']);
+const cols = (n: number) => (n === 2 || n === 4 ? 'two' : 'three');
+---
+{preface && <div class="wrap blk-preface prose" set:html={preface} />}
+{blocks.map((b) => (
+  <section
+    class:list={['blk', `blk--${b.kind}`, `blk--${b.surface}`, wide.has(b.kind) ? 'blk--wide' : 'blk--split', { 'on-dark': b.surface === 'ink' }]}
+    aria-labelledby={b.id}
+  >
+    <div class="wrap blk-grid">
+      <header class="blk-head">
+        <h2 class="blk-title" id={b.id} set:html={b.title} />
+        {b.lead && <p class="blk-lead" set:html={b.lead} />}
+      </header>
+      <div class="blk-body">
+        {b.intro && <div class="prose blk-prose" set:html={b.intro} />}
+        {b.kind === 'cards' && (
+          <div class:list={['blk-cards', `blk-cards--${cols(b.items.length)}`]}>
+            {b.items.map((it) => (
+              <article class="blk-card">
+                <h3 class="blk-card-title" set:html={it.title} />
+                <div class="blk-card-body prose" set:html={it.body} />
+              </article>
+            ))}
+          </div>
+        )}
+        {b.kind === 'steps' && (
+          <ol class="blk-steps">
+            {b.items.map((it, i) => (
+              <li class="blk-step">
+                <span class="blk-step-n" aria-hidden="true">{i + 1}</span>
+                {it.title && <h3 class="blk-step-title" set:html={it.title} />}
+                <div class="blk-step-body" set:html={it.body} />
+              </li>
+            ))}
+          </ol>
+        )}
+        {b.kind === 'factors' && (
+          <dl class:list={['blk-factors', `blk-factors--${cols(b.items.length)}`]}>
+            {b.items.map((it) => (
+              <div class="blk-factor"><dt set:html={it.title} /><dd set:html={it.body} /></div>
+            ))}
+          </dl>
+        )}
+        {b.kind === 'facts' && (
+          <dl class="blk-facts">
+            {b.items.map((it) => (
+              <div class="blk-fact">{it.title && <dt set:html={it.title} />}<dd set:html={it.body} /></div>
+            ))}
+          </dl>
+        )}
+        {b.kind === 'compare' && <div class="blk-table" set:html={b.table} />}
+        {b.kind === 'checklist' && (
+          <ul class="blk-check">{b.items.map((it) => <li set:html={it.body} />)}</ul>
+        )}
+        {b.after && <div class="prose blk-prose blk-after" set:html={b.after} />}
+      </div>
+    </div>
+  </section>
+))}

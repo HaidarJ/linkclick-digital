@@ -1,0 +1,75 @@
+---
+// /services/: the four core services as a showcase, then how they connect, then the add-ons.
+import { getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Related from '../../components/Related.astro';
+import Ugc from '../../components/art/Ugc.astro';
+import DigitalMarketing from '../../components/art/DigitalMarketing.astro';
+import WebDesign from '../../components/art/WebDesign.astro';
+import AiAutomation from '../../components/art/AiAutomation.astro';
+import { SERVICES, ADDONS } from '../../data/services';
+import { graph, webPage, breadcrumbs, abs } from '../../lib/schema';
+
+const page = await getEntry('pages', 'services');
+if (!page) throw new Error('src/content/pages/services.md is missing');
+const d = page.data;
+const html = page.rendered?.html ?? '';
+const statement = html.match(/<p>([\s\S]*?)<\/p>/)?.[1] ?? '';
+const ART = { ugc: Ugc, dm: DigitalMarketing, web: WebDesign, ai: AiAutomation };
+const path = '/services/';
+const schema = graph(
+  webPage(path, 'CollectionPage', d.title, d.description, {
+    mainEntity: { '@type': 'ItemList', itemListElement: SERVICES.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.name, url: abs(s.href) })) },
+  }),
+  breadcrumbs(path, d.breadcrumb),
+);
+---
+<Base title={d.title} description={d.description} schema={schema}>
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} />
+
+  <section class="svc" aria-label="The four core services">
+    <div class="wrap svc-grid">
+      {SERVICES.map((s) => {
+        const Art = ART[s.key];
+        return (
+          <article class:list={['svc-card', `svc-card--${s.key}`]}>
+            <div class="svc-art"><Art /></div>
+            <div class="svc-body">
+              <p class="svc-job">{s.job}</p>
+              <h2 class="svc-name"><a href={s.href}>{s.name}</a></h2>
+              <p class="svc-copy">{s.copy}</p>
+              <ul class="svc-list">
+                {s.includes.map((it) => <li>{it.href ? <a href={it.href}>{it.label}</a> : it.label}</li>)}
+              </ul>
+              <a class="svc-more" href={s.href}>{s.more}</a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
+  {statement && (
+    <section class="svc-system" aria-labelledby="system-h">
+      <div class="wrap svc-system-grid">
+        <h2 class="svc-system-h" id="system-h">One system, not four suppliers</h2>
+        <p class="svc-system-text" set:html={statement} />
+      </div>
+    </section>
+  )}
+
+  <section class="svc-addons" aria-labelledby="addons-h">
+    <div class="wrap svc-addons-grid">
+      <div>
+        <h2 class="svc-addons-h" id="addons-h">Pairs well with</h2>
+        <p class="svc-addons-intro">Add-ons that sit alongside the core services, from the same team.</p>
+      </div>
+      <ul class="svc-addons-list">
+        {ADDONS.map((a) => <li><a href={a.href}>{a.label}</a></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <Related items={d.related} />
+</Base>

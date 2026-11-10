@@ -1,0 +1,128 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import WaIcon from '../components/WaIcon.astro';
+import { graph, webPage, breadcrumbs } from '../lib/schema';
+import { BOOKING_URL, FORM_ENDPOINT, BUDGET_BANDS, WHATSAPP } from '../lib/site';
+
+const path = '/contact/';
+const crumbs = [{ label: 'Contact' }];
+const title = 'Book a Strategy Call | Linkclick Digital';
+const description = 'Book a 30-minute strategy call with Linkclick Digital, or send an enquiry with your goals. Based in London, working with businesses worldwide.';
+const schema = graph(webPage(path, 'ContactPage', title, description), breadcrumbs(path, crumbs));
+---
+<Base title={title} description={description} schema={schema}>
+  <PageHero
+    h1="Book a strategy call"
+    lede="Book a 30-minute strategy call with Linkclick Digital, send an enquiry, or message us on WhatsApp. Tell us what you sell, who you sell to and what isn't working yet."
+    breadcrumb={crumbs}
+    cta={false}
+  />
+  <div class="wrap contact-grid">
+    <div class="contact-routes">
+      <section class="contact-route" aria-labelledby="book-h">
+        <h2 id="book-h">Book a call</h2>
+        <p>Thirty minutes on your content, ads, website and enquiry handling, and what we would fix first.</p>
+        {BOOKING_URL
+          ? <a class="btn btn-primary" href={BOOKING_URL} target="_blank" rel="noopener">Choose a time</a>
+          : <p><mark class="todo">[CLIENT TO CONFIRM: Google Calendar booking page link]</mark></p>}
+      </section>
+      <section class="contact-route" aria-labelledby="wa-h">
+        <h2 id="wa-h">Message us</h2>
+        <p>Prefer to type? Send a WhatsApp message and a person replies.</p>
+        <a class="btn btn-outline" href={WHATSAPP} target="_blank" rel="noopener"><WaIcon /><span>Chat on WhatsApp</span></a>
+      </section>
+      <p class="contact-place">Linkclick Digital · Based in London, working worldwide</p>
+    </div>
+
+    <form class="enquiry" method="post" action={FORM_ENDPOINT || undefined} data-endpoint={FORM_ENDPOINT} aria-labelledby="form-h" novalidate>
+      <h2 id="form-h">Send an enquiry</h2>
+      <div class="field">
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="f-email">Work email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="f-phone">Phone <span class="opt">(optional)</span></label>
+        <input id="f-phone" name="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field-pair">
+        <div class="field">
+          <label for="f-business">Business name</label>
+          <input id="f-business" name="business" type="text" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="f-website">Website <span class="opt">(optional)</span></label>
+          <input id="f-website" name="website" type="url" inputmode="url" placeholder="https://">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-industry">Your industry</label>
+        <input id="f-industry" name="industry" type="text" autocomplete="off" placeholder="What you sell, in a few words">
+      </div>
+      {BUDGET_BANDS.length > 0 && (
+        <div class="field">
+          <label for="f-budget">Monthly budget</label>
+          <select id="f-budget" name="budget">
+            <option value="">Choose a range</option>
+            {BUDGET_BANDS.map((b) => <option>{b}</option>)}
+          </select>
+        </div>
+      )}
+      <div class="field">
+        <label for="f-message">What would you like help with?</label>
+        <textarea id="f-message" name="message" rows="5" required></textarea>
+      </div>
+      <div class="field hp" aria-hidden="true">
+        <label for="f-fax">Leave this empty</label>
+        <input id="f-fax" name="fax" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" name="t" value="">
+      <div class="field field-check">
+        <input id="f-consent" name="consent" type="checkbox" value="yes" required>
+        <label for="f-consent">I agree that Linkclick Digital can keep these details to reply to my enquiry, as set out in the <a href="/privacy/">privacy policy</a>.</label>
+      </div>
+      <button class="btn btn-primary" type="submit">Send enquiry</button>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</Base>
+
+<script>
+  // Progressive enhancement: validate, post to the Apps Script endpoint, show the result in place.
+  const form = document.querySelector<HTMLFormElement>('form.enquiry');
+  if (form) {
+    const status = form.querySelector<HTMLElement>('.form-status')!;
+    const started = Date.now();
+    (form.elements.namedItem('t') as HTMLInputElement).value = String(started);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        status.textContent = "The form isn't connected yet. Please message us on WhatsApp.";
+        return;
+      }
+      const button = form.querySelector('button')!;
+      button.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        // Apps Script web apps don't return CORS headers, so the response can't be read: a network
+        // error is the only failure the page can see.
+        await fetch(endpoint, { method: 'POST', mode: 'no-cors', body: new FormData(form) });
+        form.reset();
+        status.textContent = 'Thanks. Your enquiry has been sent, and a person will reply.';
+      } catch {
+        status.textContent = "Sorry, that didn't send. Please try again or message us on WhatsApp.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+</script>

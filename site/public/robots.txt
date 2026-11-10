@@ -1,0 +1,7 @@
+# Linkclick Digital. Search engines and AI search assistants are welcome to read and cite this site.
+# Whether to block AI training-only crawlers (GPTBot, Google-Extended, CCBot) is the owner's call;
+# blocking them does not change search visibility. Add a "User-agent: GPTBot / Disallow: /" group here if wanted.
+User-agent: *
+Allow: /
+
+Sitemap: https://www.linkclickdigital.com/sitemap-index.xml
