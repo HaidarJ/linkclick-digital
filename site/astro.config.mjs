@@ -22,6 +22,10 @@ export default defineConfig({
   trailingSlash: 'always',
   devToolbar: { enabled: false },
   build: { format: 'directory' },
+  // Minify CSS with esbuild, not Vite's default (Lightning CSS). Lightning CSS folds
+  // `animation-timeline: view()` into the `animation` shorthand, which browsers reject, so every
+  // scroll-driven animation silently stopped. scripts/check-css.mjs guards against it coming back.
+  vite: { build: { cssMinify: 'esbuild' } },
   redirects,
   integrations: [
     markTodos(),
