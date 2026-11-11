@@ -21,6 +21,8 @@ export type Block = {
   table: string;
   after: string; // html after the structured part
   surface: 'paper' | 'mist' | 'ink';
+  /** A text-only section with little or nothing after the lead: laid out as one passage, not two columns. */
+  short: boolean;
 };
 
 const BLOCK_START = /\n(?=<(?:p|h3|h4|ul|ol|table|blockquote|hr|figure|pre)[\s>])/;
@@ -103,7 +105,9 @@ export function toBlocks(html: string): { preface: string; blocks: Block[] } {
     let lead = '';
     if (children[0]?.startsWith('<p')) lead = children.shift()!.replace(/^<p>|<\/p>$/g, '');
     const c = classify(children);
-    blocks.push({ id, title, lead, kind: c.kind, intro: c.intro.join('\n'), items: c.items, table: c.table, after: c.after.join('\n'), surface: 'paper' });
+    const rest = (c.intro.join(' ') + ' ' + c.after.join(' ')).replace(/<[^>]+>/g, '').trim();
+    const short = c.kind === 'prose' && rest.length < 250;
+    blocks.push({ id, title, lead, kind: c.kind, intro: c.intro.join('\n'), items: c.items, table: c.table, after: c.after.join('\n'), surface: 'paper', short });
   }
   // Surfaces: the first process gets the page's one dark sheet; then cards, fact sheets, tables and
   // checklists get a pale sheet wherever both neighbours are plain paper. Sheets never touch, so the

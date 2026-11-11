@@ -9,7 +9,7 @@ const cols = (n: number) => (n === 2 || n === 4 ? 'two' : 'three');
 {preface && <div class="wrap blk-preface prose" set:html={preface} />}
 {blocks.map((b) => (
   <section
-    class:list={['blk', `blk--${b.kind}`, `blk--${b.surface}`, wide.has(b.kind) ? 'blk--wide' : 'blk--split', { 'on-dark': b.surface === 'ink' }]}
+    class:list={['blk', `blk--${b.kind}`, `blk--${b.surface}`, wide.has(b.kind) || b.short ? 'blk--wide' : 'blk--split', { 'blk--short': b.short, 'on-dark': b.surface === 'ink' }]}
     aria-labelledby={b.id}
   >
     <div class="wrap blk-grid">
@@ -30,7 +30,7 @@ const cols = (n: number) => (n === 2 || n === 4 ? 'two' : 'three');
           </div>
         )}
         {b.kind === 'steps' && (
-          <ol class="blk-steps">
+          <ol class:list={['blk-steps', `blk-steps--${b.items.length}`]}>
             {b.items.map((it, i) => (
               <li class="blk-step">
                 <span class="blk-step-n" aria-hidden="true">{i + 1}</span>

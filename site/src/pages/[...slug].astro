@@ -14,7 +14,7 @@ import DigitalMarketing from '../components/art/DigitalMarketing.astro';
 import WebDesign from '../components/art/WebDesign.astro';
 import AiAutomation from '../components/art/AiAutomation.astro';
 import { graph, webPage, breadcrumbs, faqPage, service } from '../lib/schema';
-import { longDate, isoDate } from '../lib/dates';
+import { isoDate } from '../lib/dates';
 import { toBlocks } from '../lib/blocks';
 
 export async function getStaticPaths() {
@@ -44,10 +44,9 @@ const schema = graph(
   isService ? service(path, d.h1, d.description, d.schema.serviceType, d.schema.audience) : null,
   faqPage(path, d.faq),
 );
-const meta = d.updated && !legal ? `Last updated <time datetime="${isoDate(d.updated)}">${longDate(d.updated)}</time>` : undefined;
 ---
 <Base title={d.title} description={d.description} schema={schema} noindex={d.noindex}>
-  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} cta={!legal} meta={meta}>
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} cta={!legal}>
     {Art && <Art slot="art" />}
   </PageHero>
   {legal ? (

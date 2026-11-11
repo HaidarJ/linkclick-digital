@@ -7,7 +7,7 @@ import Blocks from '../components/Blocks.astro';
 import Faq from '../components/Faq.astro';
 import Related from '../components/Related.astro';
 import { graph, webPage, breadcrumbs, faqPage } from '../lib/schema';
-import { longDate, isoDate } from '../lib/dates';
+import { isoDate } from '../lib/dates';
 import { toBlocks } from '../lib/blocks';
 
 const page = await getEntry('pages', 'about');
@@ -20,10 +20,9 @@ const schema = graph(
   breadcrumbs(path, d.breadcrumb),
   faqPage(path, d.faq),
 );
-const meta = d.updated ? `Last updated <time datetime="${isoDate(d.updated)}">${longDate(d.updated)}</time>` : undefined;
 ---
 <Base title={d.title} description={d.description} schema={schema}>
-  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} meta={meta} />
+  <PageHero h1={d.h1} lede={d.lede} breadcrumb={d.breadcrumb} />
   <section class="manifesto" aria-label="What Linkclick Digital stands for">
     <div class="wrap">
       <p class="manifesto-line"><span class="manifesto-text"><span class="nb">Big-agency</span> skills, without the <span class="nb">big-agency</span> layers.</span></p>
